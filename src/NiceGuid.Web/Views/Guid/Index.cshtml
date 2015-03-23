@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Nice GUID Generator - Human-readable GUIDs";
+}
+<div class="container">
+    <div class="jumbotron">
+        <h1>Nice GUID</h1>
+        <p class="lead">Pronouncable, human-readable GUID generator</p>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>
+                        Creates and combines words with letters A-F, L(1), O(0) and S(5)
+                    </p>
+
+                    <pre id="guid" class="center-block">@ViewBag.Guid</pre>
+                        <p>
+                            <button class="btn btn-primary center-block" onclick=" $.get('/guid/generate').success(function(d) { $('#guid').text(d) }); ">Generate</button>
+                        </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
