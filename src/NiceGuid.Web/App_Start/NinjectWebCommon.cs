@@ -1,4 +1,6 @@
+using ConfigMapping;
 using NiceGuid.Generator;
+using NiceGuid.Web.Configuration;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NiceGuid.Web.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NiceGuid.Web.App_Start.NinjectWebCommon), "Stop")]
@@ -50,6 +52,7 @@ namespace NiceGuid.Web.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IGuidGeneratorFactory>().ToMethod(context => new GuidGeneratorFactory(HttpContext.Current.Server.MapPath("~/words.txt")));
+            kernel.Bind<IAppSettings>().ToMethod(context => ConfigMapper.Map<IAppSettings>());
         }        
     }
 }

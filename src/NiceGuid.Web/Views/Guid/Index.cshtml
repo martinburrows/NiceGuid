@@ -5,7 +5,6 @@
     <div class="jumbotron">
         <h1>Nice GUID</h1>
         <p class="lead">Pronouncable, human-readable GUID generator</p>
-
     </div>
 
     <div class="row">
@@ -18,7 +17,7 @@
 
                     <pre id="guid" class="center-block">@ViewBag.Guid</pre>
                         <p>
-                            <button class="btn btn-primary center-block" onclick=" $.get('/guid/generate').success(function(d) { $('#guid').text(d) }); ">Generate</button>
+                            <button class="btn btn-primary center-block" onclick="$.get('/guid/generate').success(function (d) { $('#guid').text(d) });ga('send', 'event', 'GUID', 'Generate');">Generate</button>
                         </p>
                 </div>
             </div>

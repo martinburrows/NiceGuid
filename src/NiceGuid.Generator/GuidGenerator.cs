@@ -52,20 +52,21 @@ namespace NiceGuid.Generator
             }
         }
 
-        public IEnumerable<int> GetRemainingPossibleWordLengths(int remainingLength)
+        private static IEnumerable<int> GetRemainingPossibleWordLengths(int remainingLength)
         {
             const int minWordLength = 4;
             const int maxWordLength = 8;
+            const int minNextWordLength = minWordLength*2;
 
             if (remainingLength <= maxWordLength)
                 yield return remainingLength;
 
-            if (remainingLength == minWordLength || remainingLength < (minWordLength*2))
+            if (remainingLength == minWordLength || remainingLength < minNextWordLength)
                 yield break;
 
             yield return minWordLength;
 
-            var maxVariable = remainingLength - (minWordLength*2);
+            var maxVariable = remainingLength - minNextWordLength;
 
             if (maxVariable <= 0)
                 yield break;
@@ -74,7 +75,7 @@ namespace NiceGuid.Generator
                 yield return i;
         }
 
-        string GetRandomWord(int length)
+        private string GetRandomWord(int length)
         {
             return _wordsByLength[length][_random.Next(_wordsByLength[length].Count)];
         }
