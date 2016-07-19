@@ -5,6 +5,7 @@
     <div class="jumbotron">
         <h1>Nice GUID</h1>
         <p class="lead">Pronouncable, human-readable GUID generator</p>
+
     </div>
 
     <div class="row">
@@ -15,12 +16,64 @@
                         Creates and combines words with letters A-F, L(1), O(0) and S(5)
                     </p>
 
-                    <pre id="guid" class="center-block">@ViewBag.Guid</pre>
-                        <p>
-                            <button class="btn btn-primary center-block" onclick="$.get('/guid/generate').success(function (d) { $('#guid').text(d) });ga('send', 'event', 'GUID', 'Generate');">Generate</button>
-                        </p>
+                    <div class="guid center-block">
+                        <div id="nice"></div>
+                        <div id="guid"></div>
+                    </div>
+                    <p>
+                        <button class="btn btn-primary center-block" onclick="getGuid();">Generate</button>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<script type="text/javascript">
+    function getGuid() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+                updateDisplay(JSON.parse(xhttp.responseText));
+            }
+        };
+        xhttp.open('POST', '/guid/generate', true);
+        xhttp.send();
+    }
+
+    function updateDisplay(segments) {
+        var guidElement = document.getElementById('guid');
+        var niceElement = document.getElementById('nice');
+
+        guidElement.innerHTML = "GUID: ";
+        niceElement.innerHTML = "Nice: ";
+
+        var colour = 1;
+
+        segments.forEach(function (segment) {
+            var isSeparator = segment.Text === '-';
+
+            guidElement.appendChild(newElement(segment.Guid, isSeparator ? 0 : colour));
+            niceElement.appendChild(newElement(segment.Text, isSeparator ? 0 : colour));
+
+            if (!isSeparator) {
+                colour++;
+            }
+        });
+    }
+
+    function newElement(content, colour) {
+        var el = document.createElement('span');
+
+        if (colour) {
+            el.className = 'c' + colour;
+        }
+
+        el.innerHTML = content;
+
+        return el;
+    }
+
+    getGuid();
+</script>

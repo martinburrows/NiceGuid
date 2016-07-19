@@ -1,20 +1,18 @@
 using ConfigMapping;
-using NiceGuid.Generator;
 using NiceGuid.Web.Configuration;
+using System;
+using System.Web;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+using NiceGuid.Web;
+using NiceGuid.Web.Services;
+using Ninject;
+using Ninject.Web.Common;
 
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NiceGuid.Web.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NiceGuid.Web.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
 
-namespace NiceGuid.Web.App_Start
+namespace NiceGuid.Web
 {
-    using System;
-    using System.Web;
-
-    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
-    using Ninject;
-    using Ninject.Web.Common;
-
     public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper Bootstrapper = new Bootstrapper();
@@ -51,7 +49,7 @@ namespace NiceGuid.Web.App_Start
 
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IGuidGeneratorFactory>().ToMethod(context => new GuidGeneratorFactory(HttpContext.Current.Server.MapPath("~/words.txt")));
+            kernel.Bind<IGuidGenerator>().ToMethod(context => new GuidGenerator(HttpContext.Current.Server.MapPath("~/words.txt"))).InSingletonScope();
             kernel.Bind<IAppSettings>().ToMethod(context => ConfigMapper.Map<IAppSettings>());
         }        
     }

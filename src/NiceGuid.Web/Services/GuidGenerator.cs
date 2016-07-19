@@ -3,12 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NiceGuid.Web.Models;
 
-namespace NiceGuid.Generator
+namespace NiceGuid.Web.Services
 {
     public interface IGuidGenerator
     {
-        List<Segment> GetNiceGuidSegments();
+        List<Segment> GetNiceGuid();
     }
 
     public class GuidGenerator : IGuidGenerator
@@ -24,18 +25,22 @@ namespace NiceGuid.Generator
                 _wordsByLength.GetOrAdd(word.Length, new List<string>()).Add(word);
         }
 
-        public List<Segment> GetNiceGuidSegments()
+        public List<Segment> GetNiceGuid()
         {
             var segments = new List<Segment>();
 
             segments.AddRange(GetSegments(8));
             segments.Add(Segment.Separator);
+
             segments.AddRange(GetSegments(4));
             segments.Add(Segment.Separator);
+
             segments.AddRange(GetSegments(4));
             segments.Add(Segment.Separator);
+
             segments.AddRange(GetSegments(4));
             segments.Add(Segment.Separator);
+
             segments.AddRange(GetSegments(12));
 
             return segments;
@@ -63,21 +68,20 @@ namespace NiceGuid.Generator
             }
         }
 
-        private static IEnumerable<int> GetRemainingPossibleWordLengths(int remainingLength)
+        public IEnumerable<int> GetRemainingPossibleWordLengths(int remainingLength)
         {
             const int minWordLength = 4;
             const int maxWordLength = 8;
-            const int minNextWordLength = minWordLength*2;
 
             if (remainingLength <= maxWordLength)
                 yield return remainingLength;
 
-            if (remainingLength == minWordLength || remainingLength < minNextWordLength)
+            if (remainingLength == minWordLength || remainingLength < (minWordLength*2))
                 yield break;
 
             yield return minWordLength;
 
-            var maxVariable = remainingLength - minNextWordLength;
+            var maxVariable = remainingLength - (minWordLength*2);
 
             if (maxVariable <= 0)
                 yield break;
@@ -88,10 +92,11 @@ namespace NiceGuid.Generator
 
         Segment GenerateSegment(int length)
         {
-            return new Segment(GetRandomWord(length));
+            var randomWord = GetRandomWord(length);
+            return new Segment(randomWord);
         }
 
-        private string GetRandomWord(int length)
+        string GetRandomWord(int length)
         {
             return _wordsByLength[length][_random.Next(_wordsByLength[length].Count)];
         }

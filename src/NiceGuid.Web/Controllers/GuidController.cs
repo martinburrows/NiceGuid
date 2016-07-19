@@ -1,36 +1,34 @@
 ﻿using System.Web.Mvc;
-using NiceGuid.Generator;
+using NiceGuid.Web.Services;
 using NiceGuid.Web.Configuration;
 
 namespace NiceGuid.Web.Controllers
 {
     public class GuidController : Controller
     {
-        private readonly IGuidGeneratorFactory _guidGeneratorFactory;
-        private readonly IAppSettings _appSettings;
+        private readonly IGuidGenerator _generator;
+        private readonly string _trackingCode;
 
-        public GuidController(IGuidGeneratorFactory guidGeneratorFactory, IAppSettings appSettings)
+        public GuidController(IGuidGenerator generator, IAppSettings appSettings)
         {
-            _guidGeneratorFactory = guidGeneratorFactory;
-            _appSettings = appSettings;
+            _generator = generator;
+            _trackingCode = appSettings.TrackingCode;
         }
 
         public ActionResult Index()
         {
-            ViewBag.Guid = GetGuid();
-            ViewBag.TrackingCode = _appSettings.TrackingCode;
+            ViewBag.TrackingCode = _trackingCode;
             return View();
         }
 
         public ActionResult Generate()
         {
-            if (!Request.IsAjaxRequest()) return HttpNotFound();
-            return Content(GetGuid());
-        }
+#if !DEBUG
+            if (HttpContext.Request.UrlReferrer?.ToString() != "http://niceguid.com/")
+                return new HttpNotFoundResult();
+#endif
 
-        private string GetGuid()
-        {
-            return _guidGeneratorFactory.GetGuidGenerator().GetNiceGuid();
+            return Json(_generator.GetNiceGuid());
         }
     }
 }
