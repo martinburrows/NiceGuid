@@ -26,6 +26,10 @@ textarea {
     overflow: auto;
 }
 
+.jumbotron, footer {
+    text-align: center;
+}
+
 
 .c1, .c6 {
     color: #FFB842;
